@@ -1,81 +1,78 @@
-// Name: Ernesto Morales Carrasco
-// Email: emoralescarras@cnm.edu
-// Assignment: Hurricane Data
-/** Purpose:
- * Main must read in the data from the file and save each row of data into a new HurricaneRowData object, which are further 
- * organized into an ArrayList. Main also must contain a private static method that takes the ArrayList of data as input and 
- * returns the year in which the ACE index (second column) was maximal. Display out the year and maximum ACE value BOTH on the 
- * command prompt and also output the information to a text file. 
+/*
+Name: Ernesto Morales Carrasco
+Email: emoralescarras@cnm.edu
+Assignment: Human Resources Part 2
+Purpose: Reads HR data from hr.txt, stores unique Person objects in PersonOrderedSet
+and PersonImperialSet, and outputs sorted and imperial-converted data to console and files
+
+Questions with answers:
+Q1: Car and Engine are related by (Composition). Engine is tied to Car.
+Q2: Color and Red are related by (Inheritance). Red is a type of Color.
+Q3: Shirt and Clothing are related by (Inheritance). Shirt is a type of Clothing.
+Q4: Furniture and Desk are related by which (Inheritance). Desk is a type of Furniture.
+Q5: CellPhone and Battery are related by (Composition). Battery is tied to CellPhone.
 */
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
-        ArrayList<HurricaneRowData> hurricaneData = new ArrayList<>();
-        
-        // Read the CSV file
-        try (BufferedReader br = new BufferedReader(new FileReader("ace.csv"))) {
-            String line;
-            br.readLine();
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                int year = Integer.parseInt(data[0].trim());
-                int aceIndex = Integer.parseInt(data[1].trim());
-                int tropicalStorms = Integer.parseInt(data[2].trim());
-                int hurricanes = Integer.parseInt(data[3].trim());
-                int majorHurricanes = Integer.parseInt(data[4].trim());
-                
-                HurricaneRowData row = new HurricaneRowData(year, aceIndex, tropicalStorms, hurricanes, majorHurricanes);
-                hurricaneData.add(row);
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
-            return;
-        }
+	public static void main(String[] args) {
 
-        // Find the year with the maximum ACE index
-        int maxAceYear = findMaxAceYear(hurricaneData);
-        int maxAceValue = 0;
-        for (HurricaneRowData row : hurricaneData) {
-            if (row.getYear() == maxAceYear) {
-                maxAceValue = row.getAceIndex();
-                break;
-            }
-        }
+		System.out.println("Testing Part 2:");
 
-        // Output to console
-        System.out.println("Year with maximum ACE: " + maxAceYear + ", ACE Value: " + maxAceValue);
+		// Check for correct command-line argument
+		if (args.length != 1) {
+			System.out.println("Usage: java Main <filename>");
+			return;
+		}
 
-        // Output to text file
-        try (PrintWriter writer = new PrintWriter(new FileWriter("maxAceOutput.txt"))) {
-            writer.println("Year with maximum ACE: " + maxAceYear + ", ACE Value: " + maxAceValue);
-        } catch (IOException e) {
-            System.err.println("Error writing to file: " + e.getMessage());
-        }
-    }
+		// Initialize sets for sorted and imperial data
+		PersonOrderedSet orderedSet = new PersonOrderedSet();
+		PersonImperialSet imperialSet = new PersonImperialSet();
 
-    /**
-     * Method to find the year with the maximum ACE index
-     * @param data Array list with all Hurricane Data
-     * @return Year with maximum ACE index
-     */
-    private static int findMaxAceYear(ArrayList<HurricaneRowData> data) {
-        int maxAce = 0;
-        int maxYear = 0;
-        
-        for (HurricaneRowData row : data) {
-            if (row.getAceIndex() > maxAce) {
-                maxAce = row.getAceIndex();
-                maxYear = row.getYear();
-            }
-        }
-        
-        return maxYear;
-    }
+		// Add Yoshi to both sets
+		Person testPerson = new Person("Yoshi", 177.0, 80.0);
+		orderedSet.add(testPerson);
+		imperialSet.add(new Person("Yoshi", 177.0, 80.0));
+		
+		// Read data from input file
+		try (Scanner fileReader = new Scanner(new File(args[0]))) {
+			fileReader.nextLine(); // Skip header row
+			while (fileReader.hasNext()) {
+				try {
+					String name = fileReader.next();
+					double height = fileReader.nextDouble();
+					double weight = fileReader.nextDouble();
+					Person personOrdered = new Person(name, height, weight);
+					Person personImperial = new Person(name, height, weight);
+					orderedSet.add(personOrdered);
+					imperialSet.add(personImperial);
+				} catch (Exception e) {
+					System.out.println("Error parsing line, skipping...");
+					fileReader.nextLine();
+				}
+			}
+
+			// Write to output files
+			try (FileWriter orderedWriter = new FileWriter("hr_ordered_set_output.txt");
+					FileWriter imperialWriter = new FileWriter("hr_imperial_set_output.txt")) {
+				orderedWriter.write(orderedSet.toString());
+				imperialWriter.write(imperialSet.toString());
+			} catch (IOException e) {
+				System.out.println("Error writing to files: " + e.getMessage());
+			}
+
+			// Console output
+			System.out.println("Ordered Set:");
+			System.out.println(orderedSet.toString());
+			System.out.println("Imperial Set:");
+			System.out.println(imperialSet.toString());
+		} catch (IOException e) {
+			System.out.println("Error reading file: " + e.getMessage());
+		}
+
+	}
 }
