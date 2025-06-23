@@ -1,9 +1,8 @@
 /*
 Name: Ernesto Morales Carrasco
 Email: emoralescarras@cnm.edu
-Assignment: Human Resources Part 2
-Purpose: Reads HR data from hr.txt, stores unique Person objects in PersonOrderedSet
-and PersonImperialSet, and outputs sorted and imperial-converted data to console and files
+Assignment: Tree Data Structure
+Purpose: Reads HR data from hr.txt, stores unique Person objects in SortedTreeSet and outputs sorted data to console and file.
 
 Questions with answers:
 Q1: Car and Engine are related by (Composition). Engine is tied to Car.
