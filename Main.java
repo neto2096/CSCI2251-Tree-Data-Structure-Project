@@ -21,23 +21,19 @@ import java.util.Scanner;
 public class Main {
 	public static void main(String[] args) {
 
-		System.out.println("Testing Part 2:");
-
 		// Check for correct command-line argument
 		if (args.length != 1) {
 			System.out.println("Usage: java Main <filename>");
 			return;
 		}
 
-		// Initialize sets for sorted and imperial data
-		PersonOrderedSet orderedSet = new PersonOrderedSet();
-		PersonImperialSet imperialSet = new PersonImperialSet();
+		// Initialize sorted tree set
+		SortedTreeSet sortedSet = new SortedTreeSet();
 
 		// Add Yoshi to both sets
 		Person testPerson = new Person("Yoshi", 177.0, 80.0);
-		orderedSet.add(testPerson);
-		imperialSet.add(new Person("Yoshi", 177.0, 80.0));
-		
+		sortedSet.add(testPerson);
+
 		// Read data from input file
 		try (Scanner fileReader = new Scanner(new File(args[0]))) {
 			fileReader.nextLine(); // Skip header row
@@ -46,10 +42,8 @@ public class Main {
 					String name = fileReader.next();
 					double height = fileReader.nextDouble();
 					double weight = fileReader.nextDouble();
-					Person personOrdered = new Person(name, height, weight);
-					Person personImperial = new Person(name, height, weight);
-					orderedSet.add(personOrdered);
-					imperialSet.add(personImperial);
+					Person person = new Person(name, height, weight);
+                    sortedSet.add(person);
 				} catch (Exception e) {
 					System.out.println("Error parsing line, skipping...");
 					fileReader.nextLine();
@@ -57,19 +51,15 @@ public class Main {
 			}
 
 			// Write to output files
-			try (FileWriter orderedWriter = new FileWriter("hr_ordered_set_output.txt");
-					FileWriter imperialWriter = new FileWriter("hr_imperial_set_output.txt")) {
-				orderedWriter.write(orderedSet.toString());
-				imperialWriter.write(imperialSet.toString());
-			} catch (IOException e) {
-				System.out.println("Error writing to files: " + e.getMessage());
-			}
+			try (FileWriter writer = new FileWriter("hr_sorted_tree_output.txt")) {
+                writer.write(sortedSet.toString());
+            } catch (IOException e) {
+                System.out.println("Error writing to file: " + e.getMessage());
+            }
 
 			// Console output
-			System.out.println("Ordered Set:");
-			System.out.println(orderedSet.toString());
-			System.out.println("Imperial Set:");
-			System.out.println(imperialSet.toString());
+			System.out.println("Sorted Tree Set:");
+            System.out.println(sortedSet.toString());
 		} catch (IOException e) {
 			System.out.println("Error reading file: " + e.getMessage());
 		}
